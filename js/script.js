@@ -139,28 +139,26 @@ function drop(posicao) {
     mostrarTarefa();
 }
 
-// drag and drop versão mobile, usando touchScreen
-//responsável por pegar 
+// Eventos para toque (mobile)
 function touchStart(posicao, event) {
-    startDrag(posicao, event); 
+    startDrag(posicao, event);
 }
 
-//responsável pelo "arraste"
-function touchMove(event) { 
-    event.preventDefault(); //evita o scroll da tela ao arrastar
-    const touchLocation = event.targeTouches[0];
-    const taskItem = document.elementsFromPoint(touchLocation.pageX, touchLocation.pageY);
-
+function touchMove(event) {
+    event.preventDefault(); // Evita o scroll ao arrastar
+    const touchLocation = event.targetTouches[0];
+    const taskItem = document.elementFromPoint(touchLocation.pageX, touchLocation.pageY);
+    
     if (taskItem && taskItem.classList.contains('task')) {
         taskItem.classList.add('drag-over');
     }
 }
 
-// responsável por soltar
 function touchEnd(posicao, event) {
-    drop(posicao)
+    drop(posicao);
     cancelDrag();
 }
+
 
 recarregarTarefas()
 button.addEventListener('click', adicionarNovaTarefa)
