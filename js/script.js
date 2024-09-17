@@ -101,6 +101,9 @@
         // Se o modo de seleção estiver ativo e o usuário tocar em outro item
         if (selectedItem !== null && selectedItem !== posicao) {
             trocarItens(selectedItem, posicao);
+            // volta à cor original após troca
+            const previouslySelectedTask = document.querySelectorAll('.task')[selectedItem];
+            previouslySelectedTask.style.backgroundColor = "";
             selectedItem = null; // Desativa o modo de seleção após a troca
         }
     }
