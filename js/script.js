@@ -89,7 +89,9 @@
         // Ativa o modo de seleção após o toque e segure por 1 segundo
         dragTimeout = setTimeout(() => {
             selectedItem = posicao;
-            alert('Modo de seleção ativado! Toque em outro item para trocar.');
+            //muda cor de seleção
+            const selectedTask = document.querySelectorAll('.task')[posicao];
+            selectedTask.style.backgroundColor = "#ffe680";
         }, 1000);
     }
     
