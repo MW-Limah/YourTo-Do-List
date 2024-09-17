@@ -90,8 +90,9 @@ function handleTouchStart(posicao) {
         selectedItem = posicao;
         // Muda a cor do item selecionado
         const selectedTask = document.querySelectorAll('.task')[posicao];
-        selectedTask.style.backgroundColor = "#ffe680";  // Cor de destaque (amarelo claro, por exemplo)
+        selectedTask.style.backgroundColor = "#6a6a6a";  // Cor de destaque (amarelo claro, por exemplo)
     }, 1000);
+    
 }
 
 function handleTouchEnd(posicao) {
