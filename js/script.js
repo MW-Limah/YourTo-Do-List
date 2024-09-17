@@ -28,7 +28,15 @@ function mostrarTarefa(){
 
     minhaListaItens.forEach((item, posicao) => {
         novaLi += `
-        <li class="task ${item.concluido && 'done'}" draggable="true" onmousedown="startDrag(${posicao}, event)" onmouseup="cancelDrag()" ondragstart="dragStart(${posicao})" ondragover="dragOver(event)" ondrop="drop(${posicao})">
+        <li class="task ${item.concluido && 'done'}" draggable="true" 
+        onmousedown="startDrag(${posicao}, event)" 
+        onmouseup="cancelDrag()" 
+        ondragstart="dragStart(${posicao})" 
+        ondragover="dragOver(event)" 
+        ondrop="drop(${posicao})"
+        ontouchstart="touchStart(${posicao}, event)" 
+        ontouchmove="touchMove(event)" 
+        ontouchend="touchEnd(${posicao}, event)">
             <img src="img/checked.png" alt="check-na-tarefa" onclick ="concluirTarefa(${posicao})">
             <p id="tarefa-text-${posicao}">${item.tarefa}</p>
             <img src="img/trash.png" alt="tarefa-para-o-lixo" onclick="deletarItem(${posicao})">
@@ -129,6 +137,29 @@ function drop(posicao) {
     minhaListaItens.splice(posicao, 0, itemArrastado);
 
     mostrarTarefa();
+}
+
+// drag and drop versão mobile, usando touchScreen
+//responsável por pegar 
+function touchStart(posicao, event) {
+    startDrag(posicao, event); 
+}
+
+//responsável pelo "arraste"
+function touchMove(event) { 
+    event.preventDefault(); //evita o scroll da tela ao arrastar
+    const touchLocation = event.targeTouches[0];
+    const taskItem = document.elementsFromPoint(touchLocation.pageX, touchLocation.pageY);
+
+    if (taskItem && taskItem.classList.contains('task')) {
+        taskItem.classList.add('drag-over');
+    }
+}
+
+// responsável por soltar
+function touchEnd(posicao, event) {
+    drop(posicao)
+    cancelDrag();
 }
 
 recarregarTarefas()
