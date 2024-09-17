@@ -5,16 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lista de Tarefa</title>
   <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/styAlert.css">
 </head>
 <body>
   <div class="container">
-
     <input class="input-task" placeholder="O que tenho que fazer...">
     <button class="button-add-task">Adicionar</button>
     <ul class="list-tasks">
     </ul>
-    
   </div>
+
+  <!-- modal alert -->
+
+  <div id="alertModal" class="modal">
+    <div class="modal-content">
+      <p style="font-weight: bold;">Toque e segure em um item.</p>
+      <p>Sempre que os itens ficarem cinzas, significa que você pode trocá-lo de posição com qualquer outro.</p>
+      <label>
+        <input type="checkbox" id="dontShowAgain">
+        Não mostrar novamente
+      </label>
+      <div>
+        <button id="closeAlert">OK</button>
+      </div>
+    </div>
+  </div>
+
 </body>
+<script src="./js/scAlert.js"></script>
 <script src="./js/script.js"></script>
 </html>
