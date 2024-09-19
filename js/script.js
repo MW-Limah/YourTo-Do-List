@@ -40,7 +40,7 @@ function mostrarTarefa() {
                 <img src="img/checked.png" alt="check-na-tarefa" onclick="concluirTarefa(${posicao})">
                 <p id="tarefa-text-${posicao}">${item.tarefa}</p>
                 <img src="img/trash.png" alt="tarefa-para-o-lixo" onclick="deletarItem(${posicao})">
-                <button class="edit-btn" onclick="editarTarefa(${posicao})">Editar</button>
+                <button class="edit-btn" onclick="editarTarefa(${posicao}), selecionarTexto()">Editar</button>
             </li>
         `;
     });
@@ -133,6 +133,11 @@ editInput.addEventListener('keydown', (e) => {
         salvarEdicao(posicao, editInput.value);
     }
 });
+}
+
+function selecionarTexto(){
+    var input = document.querySelector('.edit-input')
+    input.select()
 }
 
 function salvarEdicao(posicao, novaTarefa) {
