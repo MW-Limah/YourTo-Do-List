@@ -1,3 +1,4 @@
+
 const button = document.querySelector('.button-add-task');
 const input = document.querySelector('.input-task');
 const listaCompleta = document.querySelector('.list-tasks');
@@ -115,6 +116,34 @@ function trocarItens(primeiro, segundo) {
     mostrarTarefa();
 }
 
+function editarTarefa(posicao) {
+const tarefaText = document.getElementById(`tarefa-text-${posicao}`);
+const tarefaAntiga = minhaListaItens[posicao].tarefa;
+
+// Substitui o parágrafo por um campo de entrada
+tarefaText.innerHTML = `<input class="edit-input" id="edit-input-${posicao}" value="${tarefaAntiga}">`;
+
+const editInput = document.getElementById(`edit-input-${posicao}`);
+editInput.focus();
+
+// Salvar a tarefa quando sair do campo de edição ou pressionar "Enter"
+editInput.addEventListener('blur', () => salvarEdicao(posicao, editInput.value));
+editInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        salvarEdicao(posicao, editInput.value);
+    }
+});
+}
+
+function salvarEdicao(posicao, novaTarefa) {
+if (novaTarefa.trim() === '') {
+    alert('O campo não pode estar vazio!');
+    return;
+}
+
+minhaListaItens[posicao].tarefa = novaTarefa;
+mostrarTarefa();
+}
 function concluirTarefa(posicao) {
     minhaListaItens[posicao].concluido = !minhaListaItens[posicao].concluido;
     mostrarTarefa();
