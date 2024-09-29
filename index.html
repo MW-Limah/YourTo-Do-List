@@ -5,32 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lista de Tarefa</title>
   <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/controles.css">
   <link rel="stylesheet" href="./css/styAlert.css">
+
   <link rel="icon" href="./img/nota.png" type="image/png">
 </head>
 <body>
-  <div class="container">
-    <input class="input-task" placeholder="O que tenho que fazer...">
-    <button class="button-add-task">Adicionar</button>
-    <ul class="list-tasks">
-    </ul>
-  </div>
+  
+<div class="controls">
+  <button class="btnAddNewList" id="btnAdd">+</button>
+  <button class="btnRemoveNewList" id="btnRemove">-</button>
+</div>
 
-  <!-- modal alert -->
+<div id="listContainers"></div>
 
-  <div id="alertModal" class="modal">
-    <div class="modal-content">
-      <p style="font-weight: bold;">Toque e segure em um item, depois selecione qualquer outro para trocá-los de lugar.</p>
-      <p>Em um computador não é necessário segurar, apenas arraste com o mouse.</p>
+<div id="alertModal" class="modal">
+  <div class="modal-content">
+      <p style="font-weight: bold;">1. Toque e segure em um item, depois selecione qualquer outro para trocá-los de lugar.</p>
+      <p>2. Em um computador não é necessário segurar, apenas arraste com o mouse.</p> 
       <label>
-        <input type="checkbox" id="dontShowAgain">
-        Não mostrar novamente
+          <input type="checkbox" id="dontShowAgain">
+          Não mostrar novamente
       </label>
       <div>
-        <button id="closeAlert">OK</button>
+          <button id="closeAlert">OK</button>
       </div>
-    </div>
   </div>
+</div>
 
 </body>
 <script src="./js/scAlert.js"></script>
