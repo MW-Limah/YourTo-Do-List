@@ -1,179 +1,220 @@
+let listCounter = 0;
+const listContainers = document.getElementById('listContainers');
 
-const button = document.querySelector('.button-add-task');
-const input = document.querySelector('.input-task');
-const listaCompleta = document.querySelector('.list-tasks');
+function createNewList() {
+    listCounter++;
+    const newListContainer = document.createElement('div');
+    newListContainer.className = 'container';
+    newListContainer.id = `list-${listCounter}`;
+    
+    newListContainer.innerHTML = `
+        <input class="input-task" placeholder="O que tenho que fazer...">
+        <button class="button-add-task">Adicionar</button>
+        <ul class="list-tasks"></ul>
+    `;
+    
+    listContainers.appendChild(newListContainer);
+    
+    initializeList(newListContainer, listCounter);
+}
 
-let minhaListaItens = [];
-let dragTimeout = null;
-let draggedItem = null;
-let selectedItem = null;  // Armazena o item selecionado no modo de toque (mobile)
+function initializeList(container, listId) {
+    const button = container.querySelector('.button-add-task');
+    const input = container.querySelector('.input-task');
+    const listaCompleta = container.querySelector('.list-tasks');
+    
+    let minhaListaItens = [];
+    let dragTimeout = null;
+    let draggedItem = null;
+    let selectedItem = null;
 
-function adicionarNovaTarefa() {
-    if (input.value.trim() === '') {
-        alert('Por favor, adicione uma tarefa!');
-        return;
+    function adicionarNovaTarefa() {
+        if (input.value.trim() === '') {
+            alert('Por favor, adicione uma tarefa!');
+            return;
+        }
+
+        minhaListaItens.push({
+            tarefa: input.value,
+            concluido: false
+        });
+
+        input.value = '';
+        mostrarTarefa();
     }
 
-    minhaListaItens.push({
-        tarefa: input.value,
-        concluido: false
-    });
+    function mostrarTarefa() {
+        let novaLi = '';
 
-    input.value = '';
-    mostrarTarefa();
-}
+        minhaListaItens.forEach((item, posicao) => {
+            novaLi += `
+                <li class="task ${item.concluido ? 'done' : ''}" 
+                    draggable="true" 
+                    onmousedown="startDrag${listId}(${posicao}, event)" 
+                    onmouseup="cancelDrag${listId}()" 
+                    ondragstart="dragStart${listId}(${posicao})" 
+                    ondragover="dragOver(event)" 
+                    ondrop="drop${listId}(${posicao})" 
+                    ontouchstart="handleTouchStart${listId}(${posicao})" 
+                    ontouchend="handleTouchEnd${listId}(${posicao})">
+                    <img src="img/checked.png" alt="check-na-tarefa"onclick="concluirTarefa${listId}(${posicao})">
+                    <p id="tarefa-text-${listId}-${posicao}">${item.tarefa}</p>
+                    <img src="img/trash.png" alt="tarefa-para-o-lixo"  onclick="deletarItem${listId}(${posicao})">
+                    <button class="edit-btn" onclick="editarTarefa${listId}(${posicao}), selecionarTexto()">Editar</button>
+                </li>
+            `;
+        });
 
-function mostrarTarefa() {
-    let novaLi = '';
+        listaCompleta.innerHTML = novaLi;
+        localStorage.setItem(`Lista-${listId}`, JSON.stringify(minhaListaItens));
+    }
 
-    minhaListaItens.forEach((item, posicao) => {
-        novaLi += `
-            <li class="task ${item.concluido ? 'done' : ''}" 
-                draggable="true" 
-                onmousedown="startDrag(${posicao}, event)" 
-                onmouseup="cancelDrag()" 
-                ondragstart="dragStart(${posicao})" 
-                ondragover="dragOver(event)" 
-                ondrop="drop(${posicao})" 
-                ontouchstart="handleTouchStart(${posicao})" 
-                ontouchend="handleTouchEnd(${posicao})">
-                <img src="img/checked.png" alt="check-na-tarefa" onclick="concluirTarefa(${posicao})">
-                <p id="tarefa-text-${posicao}">${item.tarefa}</p>
-                <img src="img/trash.png" alt="tarefa-para-o-lixo" onclick="deletarItem(${posicao})">
-                <button class="edit-btn" onclick="editarTarefa(${posicao}), selecionarTexto()">Editar</button>
-            </li>
-        `;
-    });
+    window[`startDrag${listId}`] = function(posicao, event) {
+        dragTimeout = setTimeout(() => {
+            const taskItem = event.target;
+            draggedItem = posicao;
+            taskItem.classList.add('draggable');
+        }, 1000);
+    };
 
-    listaCompleta.innerHTML = novaLi;
-    localStorage.setItem('Lista', JSON.stringify(minhaListaItens));
-}
+    window[`cancelDrag${listId}`] = function() {
+        clearTimeout(dragTimeout);
+    };
 
-// Funções para "drag and drop" com o mouse (já funcionam corretamente)
-function startDrag(posicao, event) {
-    dragTimeout = setTimeout(() => {
-        const taskItem = event.target;
+    window[`dragStart${listId}`] = function(posicao) {
         draggedItem = posicao;
-        taskItem.classList.add('draggable');
-    }, 1000); // Habilita o arraste após 1 segundo
-}
+    };
 
-function cancelDrag() {
-    clearTimeout(dragTimeout);
-}
+    window[`drop${listId}`] = function(posicao) {
+        const taskItems = document.querySelectorAll(`#list-${listId} .task`);
+        taskItems.forEach(item => item.classList.remove('drag-over'));
+        
+        if (draggedItem === posicao) return;
 
-function dragStart(posicao) {
-    draggedItem = posicao;
-}
+        const itemArrastado = minhaListaItens[draggedItem];
+        minhaListaItens.splice(draggedItem, 1);
+        minhaListaItens.splice(posicao, 0, itemArrastado);
 
-function dragOver(event) {
-    event.preventDefault();
-    event.target.closest('.task').classList.add('drag-over');
-}
+        mostrarTarefa();
+    };
 
-function drop(posicao) {
-    const taskItems = document.querySelectorAll('.task');
-    taskItems.forEach(item => item.classList.remove('drag-over'));
-    
-    if (draggedItem === posicao) return;
+    window[`handleTouchStart${listId}`] = function(posicao) {
+        dragTimeout = setTimeout(() => {
+            selectedItem = posicao;
+            const selectedTask = document.querySelectorAll(`#list-${listId} .task`)[posicao];
+            selectedTask.style.backgroundColor = "#6a6a6a";
+        }, 1000);
+    };
 
-    const itemArrastado = minhaListaItens[draggedItem];
-    minhaListaItens.splice(draggedItem, 1);
-    minhaListaItens.splice(posicao, 0, itemArrastado);
+    window[`handleTouchEnd${listId}`] = function(posicao) {
+        clearTimeout(dragTimeout);
 
-    mostrarTarefa();
-}
+        if (selectedItem !== null && selectedItem !== posicao) {
+            trocarItens(selectedItem, posicao);
+            const previouslySelectedTask = document.querySelectorAll(`#list-${listId} .task`)[selectedItem];
+            previouslySelectedTask.style.backgroundColor = "";
+            selectedItem = null;
+        }
+    };
 
-// Funções para toque (mobile)
-function handleTouchStart(posicao) {
-    // Ativa o modo de seleção após o toque e segure por 1 segundo
-    dragTimeout = setTimeout(() => {
-        selectedItem = posicao;
-        // Muda a cor do item selecionado
-        const selectedTask = document.querySelectorAll('.task')[posicao];
-        selectedTask.style.backgroundColor = "#6a6a6a";  // Cor de destaque (amarelo claro, por exemplo)
-    }, 1000);
-    
-}
+    window[`concluirTarefa${listId}`] = function(posicao) {
+        minhaListaItens[posicao].concluido = !minhaListaItens[posicao].concluido;
+        mostrarTarefa();
+    };
 
-function handleTouchEnd(posicao) {
-    clearTimeout(dragTimeout);
+    window[`deletarItem${listId}`] = function(posicao) {
+        minhaListaItens.splice(posicao, 1);
+        mostrarTarefa();
+    };
 
-    // Se o modo de seleção estiver ativo e o usuário tocar em outro item
-    if (selectedItem !== null && selectedItem !== posicao) {
-        trocarItens(selectedItem, posicao);
-        // Volta à cor original após a troca
-        const previouslySelectedTask = document.querySelectorAll('.task')[selectedItem];
-        previouslySelectedTask.style.backgroundColor = "";  // Remove o estilo customizado
-        selectedItem = null;  // Desativa o modo de seleção após a troca
+    window[`editarTarefa${listId}`] = function(posicao) {
+        const tarefaText = document.getElementById(`tarefa-text-${listId}-${posicao}`);
+        const tarefaAntiga = minhaListaItens[posicao].tarefa;
+
+        tarefaText.innerHTML = `<input class="edit-input" id="edit-input-${listId}-${posicao}" value="${tarefaAntiga}">`;
+
+        const editInput = document.getElementById(`edit-input-${listId}-${posicao}`);
+        editInput.focus();
+
+        editInput.addEventListener('blur', () => salvarEdicao(posicao, editInput.value));
+        editInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                salvarEdicao(posicao, editInput.value);
+            }
+        });
+    };
+
+    function salvarEdicao(posicao, novaTarefa) {
+        if (novaTarefa.trim() === '') {
+            alert('O campo não pode estar vazio!');
+            return;
+        }
+
+        minhaListaItens[posicao].tarefa = novaTarefa;
+        mostrarTarefa();
     }
-}
 
-function trocarItens(primeiro, segundo) {
-    const itemSelecionado = minhaListaItens[primeiro];
-    minhaListaItens[primeiro] = minhaListaItens[segundo];
-    minhaListaItens[segundo] = itemSelecionado;
-    mostrarTarefa();
-}
-
-function editarTarefa(posicao) {
-const tarefaText = document.getElementById(`tarefa-text-${posicao}`);
-const tarefaAntiga = minhaListaItens[posicao].tarefa;
-
-// Substitui o parágrafo por um campo de entrada
-tarefaText.innerHTML = `<input class="edit-input" id="edit-input-${posicao}" value="${tarefaAntiga}">`;
-
-const editInput = document.getElementById(`edit-input-${posicao}`);
-editInput.focus();
-
-// Salvar a tarefa quando sair do campo de edição ou pressionar "Enter"
-editInput.addEventListener('blur', () => salvarEdicao(posicao, editInput.value));
-editInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        salvarEdicao(posicao, editInput.value);
+    function trocarItens(primeiro, segundo) {
+        const itemSelecionado = minhaListaItens[primeiro];
+        minhaListaItens[primeiro] = minhaListaItens[segundo];
+        minhaListaItens[segundo] = itemSelecionado;
+        mostrarTarefa();
     }
-});
-}
 
-function selecionarTexto(){
-    var input = document.querySelector('.edit-input')
-    input.select()
-}
-
-function salvarEdicao(posicao, novaTarefa) {
-if (novaTarefa.trim() === '') {
-    alert('O campo não pode estar vazio!');
-    return;
-}
-
-minhaListaItens[posicao].tarefa = novaTarefa;
-mostrarTarefa();
-}
-function concluirTarefa(posicao) {
-    minhaListaItens[posicao].concluido = !minhaListaItens[posicao].concluido;
-    mostrarTarefa();
-}
-
-function deletarItem(posicao) {
-    minhaListaItens.splice(posicao, 1);
-    mostrarTarefa();
-}
-
-function recarregarTarefas() {
-    const tarefasDoLocalStorage = localStorage.getItem('Lista');
-    if (tarefasDoLocalStorage) {
-        minhaListaItens = JSON.parse(tarefasDoLocalStorage);
+    function recarregarTarefas() {
+        const tarefasDoLocalStorage = localStorage.getItem(`Lista-${listId}`);
+        if (tarefasDoLocalStorage) {
+            minhaListaItens = JSON.parse(tarefasDoLocalStorage);
+        }
+        mostrarTarefa();
     }
-    mostrarTarefa();
+
+    recarregarTarefas();
+    button.addEventListener('click', adicionarNovaTarefa);
+
+    input.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            adicionarNovaTarefa();
+        }
+    });
 }
 
-// Recarrega as tarefas salvas no localStorage ao carregar a página
-recarregarTarefas();
-button.addEventListener('click', adicionarNovaTarefa);
+document.getElementById('btnAdd').addEventListener('click', createNewList);
 
-// Também permite adicionar a tarefa ao pressionar a tecla Enter
-input.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-        adicionarNovaTarefa();
+document.getElementById('btnRemove').addEventListener('click', function() {
+    if (listCounter > 0) {
+        const lastList = document.getElementById(`list-${listCounter}`);
+        if (lastList) {
+            lastList.remove();
+            localStorage.removeItem(`Lista-${listCounter}`);
+            listCounter--;
+        }
     }
 });
+
+createNewList();
+
+const modal = document.getElementById("alertModal");
+const closeBtn = document.getElementById("closeAlert");
+const dontShowAgainCheckbox = document.getElementById("dontShowAgain");
+
+function showModal() {
+    if (localStorage.getItem("dontShowAlertAgain") !== "true") {
+        modal.style.display = "block";
+    }
+}
+
+closeBtn.onclick = function() {
+    modal.style.display = "none";
+    if (dontShowAgainCheckbox.checked) {
+        localStorage.setItem("dontShowAlertAgain", "true");
+    }
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+showModal();
