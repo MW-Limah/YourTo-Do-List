@@ -1,13 +1,15 @@
 let listCounter = 0;
 const listContainers = document.getElementById('listContainers');
+let listToDelete = null;
 
-function createNewList() {
-    listCounter++;
+function createNewList(id = null) {
+    const listId = id || ++listCounter;
     const newListContainer = document.createElement('div');
     newListContainer.className = 'container';
-    newListContainer.id = `list-${listCounter}`;
+    newListContainer.id = `list-${listId}`;
     
     newListContainer.innerHTML = `
+        <button class="delete-list-btn" onclick="confirmDeleteList(${listId})">Excluir</button>
         <input class="input-task" placeholder="O que tenho que fazer...">
         <button class="button-add-task">Adicionar</button>
         <ul class="list-tasks"></ul>
@@ -15,8 +17,49 @@ function createNewList() {
     
     listContainers.appendChild(newListContainer);
     
-    initializeList(newListContainer, listCounter);
+    initializeList(newListContainer, listId);
+    return listId;
 }
+
+function confirmDeleteList(listId) {
+    listToDelete = listId;
+    document.getElementById('confirmModal').style.display = 'block';
+}
+
+function deleteList() {
+    if (listToDelete) {
+        const listToRemove = document.getElementById(`list-${listToDelete}`);
+        if (listToRemove) {
+            listToRemove.remove();
+            localStorage.removeItem(`Lista-${listToDelete}`);
+            updateListCounterInLocalStorage();
+        }
+        listToDelete = null;
+    }
+    document.getElementById('confirmModal').style.display = 'none';
+}
+
+function cancelDeleteList() {
+    listToDelete = null;
+    document.getElementById('confirmModal').style.display = 'none';
+}
+
+function updateListCounterInLocalStorage() {
+    const containers = document.querySelectorAll('.container');
+    const maxId = Array.from(containers).reduce((max, container) => {
+        const id = parseInt(container.id.split('-')[1]);
+        return id > max ? id : max;
+    }, 0);
+    localStorage.setItem('listCounter', maxId.toString());
+}
+
+document.getElementById('btnAdd').addEventListener('click', () => {
+    const newListId = createNewList();
+    updateListCounterInLocalStorage();
+});
+
+document.getElementById('confirmDelete').addEventListener('click', deleteList);
+document.getElementById('cancelDelete').addEventListener('click', cancelDeleteList);
 
 function initializeList(container, listId) {
     const button = container.querySelector('.button-add-task');
@@ -24,7 +67,6 @@ function initializeList(container, listId) {
     const listaCompleta = container.querySelector('.list-tasks');
     
     let minhaListaItens = [];
-    let dragTimeout = null;
     let draggedItem = null;
     let selectedItem = null;
 
@@ -50,17 +92,15 @@ function initializeList(container, listId) {
             novaLi += `
                 <li class="task ${item.concluido ? 'done' : ''}" 
                     draggable="true" 
-                    onmousedown="startDrag${listId}(${posicao}, event)" 
-                    onmouseup="cancelDrag${listId}()" 
-                    ondragstart="dragStart${listId}(${posicao})" 
-                    ondragover="dragOver(event)" 
-                    ondrop="drop${listId}(${posicao})" 
+                    ondragstart="dragStart${listId}(${posicao}, event)" 
+                    ondragover="dragOver${listId}(event)" 
+                    ondrop="drop${listId}(${posicao}, event)" 
                     ontouchstart="handleTouchStart${listId}(${posicao})" 
                     ontouchend="handleTouchEnd${listId}(${posicao})">
-                    <img src="img/checked.png" alt="check-na-tarefa"onclick="concluirTarefa${listId}(${posicao})">
+                    <img src="img/checked.png" alt="check-na-tarefa" onclick="concluirTarefa${listId}(${posicao})">
                     <p id="tarefa-text-${listId}-${posicao}">${item.tarefa}</p>
-                    <img src="img/trash.png" alt="tarefa-para-o-lixo"  onclick="deletarItem${listId}(${posicao})">
-                    <button class="edit-btn" onclick="editarTarefa${listId}(${posicao}), selecionarTexto()">Editar</button>
+                    <img src="img/trash.png" alt="tarefa-para-o-lixo" onclick="deletarItem${listId}(${posicao})">
+                    <button class="edit-btn" onclick="editarTarefa${listId}(${posicao})">Editar</button>
                 </li>
             `;
         });
@@ -69,26 +109,19 @@ function initializeList(container, listId) {
         localStorage.setItem(`Lista-${listId}`, JSON.stringify(minhaListaItens));
     }
 
-    window[`startDrag${listId}`] = function(posicao, event) {
-        dragTimeout = setTimeout(() => {
-            const taskItem = event.target;
-            draggedItem = posicao;
-            taskItem.classList.add('draggable');
-        }, 1000);
-    };
-
-    window[`cancelDrag${listId}`] = function() {
-        clearTimeout(dragTimeout);
-    };
-
-    window[`dragStart${listId}`] = function(posicao) {
+    // Drag and drop functions
+    window[`dragStart${listId}`] = function(posicao, event) {
         draggedItem = posicao;
+        event.dataTransfer.effectAllowed = "move";
     };
 
-    window[`drop${listId}`] = function(posicao) {
-        const taskItems = document.querySelectorAll(`#list-${listId} .task`);
-        taskItems.forEach(item => item.classList.remove('drag-over'));
-        
+    window[`dragOver${listId}`] = function(event) {
+        event.preventDefault();  // Important: Prevent default to allow drop
+        event.dataTransfer.dropEffect = "move";
+    };
+
+    window[`drop${listId}`] = function(posicao, event) {
+        event.preventDefault();
         if (draggedItem === posicao) return;
 
         const itemArrastado = minhaListaItens[draggedItem];
@@ -98,17 +131,16 @@ function initializeList(container, listId) {
         mostrarTarefa();
     };
 
+    // Touch functions for drag and drop on mobile
     window[`handleTouchStart${listId}`] = function(posicao) {
-        dragTimeout = setTimeout(() => {
-            selectedItem = posicao;
+        selectedItem = posicao;
+        setTimeout(() => {
             const selectedTask = document.querySelectorAll(`#list-${listId} .task`)[posicao];
             selectedTask.style.backgroundColor = "#6a6a6a";
-        }, 1000);
+        }, 200);  // Slight delay to distinguish touch
     };
 
     window[`handleTouchEnd${listId}`] = function(posicao) {
-        clearTimeout(dragTimeout);
-
         if (selectedItem !== null && selectedItem !== posicao) {
             trocarItens(selectedItem, posicao);
             const previouslySelectedTask = document.querySelectorAll(`#list-${listId} .task`)[selectedItem];
@@ -116,6 +148,13 @@ function initializeList(container, listId) {
             selectedItem = null;
         }
     };
+
+    function trocarItens(primeiro, segundo) {
+        const itemSelecionado = minhaListaItens[primeiro];
+        minhaListaItens[primeiro] = minhaListaItens[segundo];
+        minhaListaItens[segundo] = itemSelecionado;
+        mostrarTarefa();
+    }
 
     window[`concluirTarefa${listId}`] = function(posicao) {
         minhaListaItens[posicao].concluido = !minhaListaItens[posicao].concluido;
@@ -154,19 +193,12 @@ function initializeList(container, listId) {
         mostrarTarefa();
     }
 
-    function trocarItens(primeiro, segundo) {
-        const itemSelecionado = minhaListaItens[primeiro];
-        minhaListaItens[primeiro] = minhaListaItens[segundo];
-        minhaListaItens[segundo] = itemSelecionado;
-        mostrarTarefa();
-    }
-
     function recarregarTarefas() {
         const tarefasDoLocalStorage = localStorage.getItem(`Lista-${listId}`);
         if (tarefasDoLocalStorage) {
             minhaListaItens = JSON.parse(tarefasDoLocalStorage);
+            mostrarTarefa();
         }
-        mostrarTarefa();
     }
 
     recarregarTarefas();
@@ -179,42 +211,30 @@ function initializeList(container, listId) {
     });
 }
 
-document.getElementById('btnAdd').addEventListener('click', createNewList);
+
+function loadSavedLists() {
+    const savedListCounter = localStorage.getItem('listCounter');
+    if (savedListCounter) {
+        listCounter = parseInt(savedListCounter);
+        for (let i = 1; i <= listCounter; i++) {
+            if (localStorage.getItem(`Lista-${i}`)) {
+                createNewList(i);
+            }
+        }
+    } else {
+        createNewList();
+    }
+}
 
 document.getElementById('btnRemove').addEventListener('click', function() {
     if (listCounter > 0) {
         const lastList = document.getElementById(`list-${listCounter}`);
         if (lastList) {
-            lastList.remove();
-            localStorage.removeItem(`Lista-${listCounter}`);
-            listCounter--;
+            confirmDeleteList(listCounter);
         }
     }
 });
 
-createNewList();
+window.onload = loadSavedLists;
 
-const modal = document.getElementById("alertModal");
-const closeBtn = document.getElementById("closeAlert");
-const dontShowAgainCheckbox = document.getElementById("dontShowAgain");
-
-function showModal() {
-    if (localStorage.getItem("dontShowAlertAgain") !== "true") {
-        modal.style.display = "block";
-    }
-}
-
-closeBtn.onclick = function() {
-    modal.style.display = "none";
-    if (dontShowAgainCheckbox.checked) {
-        localStorage.setItem("dontShowAlertAgain", "true");
-    }
-}
-
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
-showModal();
+// ... (seu código
