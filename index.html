@@ -7,15 +7,16 @@
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./css/controles.css">
   <link rel="stylesheet" href="./css/styAlert.css">
-
   <link rel="icon" href="./img/nota.png" type="image/png">
 </head>
 <body>
   
-<div class="controls">
-  <button class="btnAddNewList" id="btnAdd">+</button>
-  <button class="btnRemoveNewList" id="btnRemove">-</button>
-</div>
+  <div class="controls">
+    <div class="add-container">
+      <button class="btnAddNewList" id="btnAdd">+</button>
+      <span class="add-list-span">Adicionar Lista</span>
+    </div>
+  </div>
 
 <div id="listContainers"></div>
 
@@ -45,7 +46,10 @@
   </div>
 </div>
 
+<script src="./js/add-rmv-list.js"></script>
+<script src="./js/add-rmv-edit-task.js"></script>
+<script src="./js/Alert.js"></script>
+<script src="./js/btn-script.js"></script>
+<script src="./js/load-save-list.js"></script>
 </body>
-<script src="./js/scAlert.js"></script>
-<script src="./js/script.js"></script>
 </html>
