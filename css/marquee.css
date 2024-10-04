@@ -19,7 +19,7 @@
 }
 
 .marquee.scrolling p {
-    animation: marquee 15s linear infinite;
+    animation: marquee 10s linear infinite;
 }
 
 .marquee.editing {
@@ -29,7 +29,7 @@
 
 @keyframes marquee {
     from {
-        transform: translateX(100%);
+        transform: translateX(70%);
     }
     to {
         transform: translateX(-100%);
