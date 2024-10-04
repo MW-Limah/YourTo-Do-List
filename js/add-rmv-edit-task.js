@@ -23,21 +23,37 @@ function initializeList(container, listId) {
 
     function mostrarTarefa() {
         let novaLi = '';
-
+    
         minhaListaItens.forEach((item, posicao) => {
             novaLi += `
                 <li class="task ${item.concluido ? 'done' : ''}">
                     <img src="img/checked.png" alt="check-na-tarefa" onclick="concluirTarefa${listId}(${posicao})">
-                    <p id="tarefa-text-${listId}-${posicao}">${item.tarefa}</p>
+                    <div class="marquee" id="marquee-${listId}-${posicao}">
+                        <p id="tarefa-text-${listId}-${posicao}">${item.tarefa}</p>
+                    </div>
                     <img src="img/trash.png" alt="tarefa-para-o-lixo" onclick="deletarItem${listId}(${posicao})">
                     <button class="edit-btn" onclick="editarTarefa${listId}(${posicao})">Editar</button>
                 </li>
             `;
         });
-
+    
         listaCompleta.innerHTML = novaLi;
+    
+        // Após adicionar as tarefas ao DOM, verifica o tamanho do texto e ativa o marquee se necessário
+        minhaListaItens.forEach((item, posicao) => {
+            const marqueeDiv = document.getElementById(`marquee-${listId}-${posicao}`);
+            const textWidth = marqueeDiv.querySelector('p').scrollWidth;
+            const containerWidth = marqueeDiv.clientWidth;
+    
+            // Se o texto for maior que a largura da div, ativa o efeito marquee
+            if (textWidth > containerWidth) {
+                marqueeDiv.classList.add('scrolling');
+            }
+        });
+    
         localStorage.setItem(`Lista-${listId}`, JSON.stringify(minhaListaItens));
     }
+    
 
     window[`concluirTarefa${listId}`] = function(posicao) {
         minhaListaItens[posicao].concluido = !minhaListaItens[posicao].concluido;
@@ -52,12 +68,16 @@ function initializeList(container, listId) {
     window[`editarTarefa${listId}`] = function(posicao) {
         const tarefaText = document.getElementById(`tarefa-text-${listId}-${posicao}`);
         const tarefaAntiga = minhaListaItens[posicao].tarefa;
-
+    
+        const marqueeDiv = document.getElementById(`marquee-${listId}-${posicao}`);
+        marqueeDiv.classList.remove('scrolling');
+        marqueeDiv.classList.add('editing'); // Adiciona a classe editing para parar a rolagem e centralizar
+    
         tarefaText.innerHTML = `<input class="edit-input" id="edit-input-${listId}-${posicao}" value="${tarefaAntiga}">`;
-
+    
         const editInput = document.getElementById(`edit-input-${listId}-${posicao}`);
         editInput.focus();
-
+    
         editInput.addEventListener('blur', () => salvarEdicao(posicao, editInput.value));
         editInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -65,15 +85,15 @@ function initializeList(container, listId) {
             }
         });
     };
-
+    
     function salvarEdicao(posicao, novaTarefa) {
         if (novaTarefa.trim() === '') {
             alert('O campo não pode estar vazio!');
             return;
         }
-
+    
         minhaListaItens[posicao].tarefa = novaTarefa;
-        mostrarTarefa();
+        mostrarTarefa(); // Atualiza a lista e restaura o comportamento padrão
     }
 
     function recarregarTarefas() {
