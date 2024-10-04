@@ -11,6 +11,15 @@ body {
     height: 100vh;
 }
 
+#listContainers {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    padding: 20px;
+    gap: 20px;
+}
+
 .container {
     background-color: #d1d1d1;
     width: 500px;
@@ -55,6 +64,14 @@ body {
     list-style: none;
     font-size: 14pt;
     margin-top: 40px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 20px;
+    box-sizing: content-box;
+}
+
+.list-tasks {
+    overflow-y: overlay;
 }
 
 .task {
@@ -89,7 +106,8 @@ img {
 
 .edit-btn {
     position: absolute;
-    right: -15%;
+    right: 10%;
+    bottom: 50px;
     background-color: #003329;
     color: white;
     padding: 10px 10px;
@@ -173,8 +191,14 @@ img {
     body {
         background: linear-gradient(#83c9c9, #58a5aa, #58a5aa, #83c9c9);
     }
+
+    #listContainers {
+        flex-direction: column;
+        align-items: center;
+    }
+
     .container {
-        width: 90%;
+        width: 100%;
         display: flex;
         flex-wrap: wrap;
         flex-direction: column;
@@ -221,5 +245,26 @@ img {
     .confirm-modal-content {
         width: 80%;
     }
+
+    .input-task-title {
+        position: relative;
+        left: -10px;
+    }
 }
 
+.titles {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.input-task-title {
+    background-color: rgba(0, 0, 0, 0.1);
+    width: 100%;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    border: none;
+    padding: 5px;
+}
