@@ -135,7 +135,8 @@ img {
 
 .delete-list-btn {
     position: absolute;
-    bottom: 10px;
+    margin-top: 10px;
+    bottom: 15px;
     left: 10px;
     background-color: #9a291a;
     color: white;
