@@ -53,6 +53,7 @@ body {
 .list-tasks {
     width: 100%;
     list-style: none;
+    font-size: 14pt;
     margin-top: 40px;
 }
 
@@ -196,7 +197,7 @@ img {
     }
 
     .task {
-        height: 40px;
+        height: 50px;
         padding: 0 10px;
     }
 
@@ -221,3 +222,4 @@ img {
         width: 80%;
     }
 }
+
