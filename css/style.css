@@ -26,7 +26,7 @@ body {
     height: auto;
     border-radius: 10px;
     padding: 25px;
-    padding-bottom: 20px;
+    padding-bottom: 50px;
     margin: 100px auto 0;
     position: relative;
 }
@@ -137,8 +137,8 @@ img {
 
 .delete-list-btn {
     position: absolute;
-    margin-top: 10px;
-    bottom: 15px;
+    margin-top: 15px;
+    bottom: 5px;
     left: 10px;
     background-color: #9a291a;
     color: white;
