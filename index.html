@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,8 +13,9 @@
 
   <link rel="stylesheet" href="./css/ScrollBar.css">
 </head>
+
 <body>
-  
+
   <div class="controls">
     <div class="add-container">
       <button class="btnAddNewList" id="btnAdd">+</button>
@@ -21,9 +23,9 @@
     </div>
   </div>
 
-<div id="listContainers"></div>
+  <div id="listContainers"></div>
 
-<!-- <div id="alertModal" class="modal">
+  <!-- <div id="alertModal" class="modal">
   <div class="modal-content">
       <p style="font-weight: bold;">1. Toque e segure em um item, depois selecione qualquer outro para trocá-los de lugar.</p>
       <p>2. Em um computador não é necessário segurar, apenas arraste com o mouse.</p> 
@@ -38,21 +40,183 @@
   </div>
 </div> -->
 
-<!-- Modal de confirmação para exclusão de lista -->
-<div id="confirmModal" class="confirm-modal">
-  <div class="confirm-modal-content">
+  <!-- Modal de confirmação para exclusão de lista -->
+  <div id="confirmModal" class="confirm-modal">
+    <div class="confirm-modal-content">
       <p>Tem certeza que deseja excluir esta lista?</p>
       <div class="confirm-modal-buttons">
-          <button id="confirmDelete">Sim</button>
-          <button id="cancelDelete">Cancelar</button>
+        <button id="confirmDelete">Sim</button>
+        <button id="cancelDelete">Cancelar</button>
       </div>
+    </div>
   </div>
-</div>
-<script src="./js/add-rmv-list.js"></script>
-<script src="./js/add-rmv-edit-task.js"></script>
-<script src="./js/Alert.js"></script>
-<script src="./js/btn-script.js"></script>
-<script src="./js/load-save-list.js"></script>
-<script src="./js/dragDropTasks.js"></script>
+  <footer>
+    <style>
+      footer {
+        position: relative;
+        top: 71%;
+        width: 100%;
+        background-color: rgb(48, 97, 107);
+      }
+
+      .footer-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        grid-template-areas:
+          "link sobre-mim contato"
+          "copy copy copy";
+        gap: 10px;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .link {
+        grid-area: link;
+      }
+
+      .sobre-mim {
+        grid-area: sobre-mim;
+      }
+
+      .contato {
+        grid-area: contato;
+      }
+
+
+      .footer-info .contato,
+      .footer-info .sobre-mim,
+      .footer-info .link {
+        padding: 20px;
+        margin: 15px;
+      }
+
+      .footer-info .copy {
+        padding: 10px;
+      }
+
+      .link a {
+        display: block;
+        margin: 5px 0;
+        text-decoration: none;
+        color: rgb(192, 236, 224);
+      }
+
+      .link a:hover {
+        text-decoration: underline;
+        color: rgb(255, 255, 255);
+      }
+
+      .copy {
+        grid-area: copy;
+        width: 100%;
+        background-color: rgba(47, 110, 111, 1);
+
+      }
+
+      #copy {
+        display: flex;
+        justify-content: space-evenly;
+        text-align: center;
+        align-items: center;
+      }
+
+      .imgs {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .imglink {
+        opacity: 1;
+      }
+
+      .imgs .imglink {
+        margin: 10px;
+        width: 2rem;
+        height: 2rem;
+        cursor: pointer;
+      }
+
+      ul li {
+        margin-left: 10px;
+      }
+
+      /* Media query para telas menores */
+      @media (max-width: 768px) {
+        .footer-info {
+          display: grid;
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto;
+          grid-template-areas:
+            "link"
+            "sobre-mim"
+            "contato"
+            "copy";
+          gap: 10px;
+        }
+
+        .footer-info .contato,
+        .footer-info .sobre-mim,
+        .footer-info .link {
+          padding: 10px;
+          margin: 10px;
+        }
+
+        #copy {
+          display: flex;
+          flex-direction: column-reverse;
+        }
+      }
+    </style>
+    <section class="footer-info">
+      <div class="link">
+        <h3>Acesse outros sites.</h3>
+        <ul>
+          <li>
+            <a href="https://github.com/MW-Limah" target="_blank">Meu perfil do Github</a>
+          </li>
+          <li>
+            <a href="https://monitore.onrender.com/landing-page.html" target="_blank">
+              Projeto Monitore por Edu Tech Inova LTDA
+            </a>
+          </li>
+          <li>
+            <a href="https://webportifolio.onrender.com" target="_blank">
+              Meu Portifólio
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="contato" id="contact">
+        <h3>Entre em contato!</h3>
+        <p><strong>Endereço: </strong>Av. Brigadeiro Hilário Gurjão, 1470</p>
+        <p><strong>E-mail: </strong> sir.williamsdlima@gmail.com</p>
+        <p><strong>Telefone: </strong>(92) 98563-3944</p>
+      </div>
+      <div class="sobre-mim">
+        <h3>Formação:</h3>
+        <p>Cursando Ciência da Computação - 2° Período</p>
+      </div>
+      <div id="copy" class="copy">
+        <p>&copy; 2022 | Todos os direitos reservados. | Desenvolvido por <strong>@MW-Limah</strong></p>
+        <div class="imgs">
+          <a href="https://github.com/MW-Limah" target="_blank">
+            <img class="imglink" src="./img/imgsLinks/github.png" alt="Github">
+          </a>
+          <img class="imglink" src="./img/imgsLinks/whatsapp.png" alt="Whatsapp">
+          <img class="imglink" src="./img/imgsLinks/instagram.png" alt="Instagram">
+          <img class="imglink" src="./img/imgsLinks/email.png" alt="E-mail">
+        </div>
+      </div>
+    </section>
+  </footer>
+
+  <script src="./js/add-rmv-list.js"></script>
+  <script src="./js/add-rmv-edit-task.js"></script>
+  <script src="./js/Alert.js"></script>
+  <script src="./js/btn-script.js"></script>
+  <script src="./js/load-save-list.js"></script>
+  <script src="./js/dragDropTasks.js"></script>
 </body>
+
 </html>
