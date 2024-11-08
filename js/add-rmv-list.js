@@ -8,7 +8,7 @@ function createNewList(id = null) {
     const newListContainer = document.createElement('div');
     newListContainer.className = 'container';
     newListContainer.id = `list-${listId}`;
-    
+
     newListContainer.innerHTML = `
         <button class="delete-list-btn" id="btnRemove" onclick="confirmDeleteList(${listId})">Excluir</button>
         <div class="titles">
@@ -18,9 +18,9 @@ function createNewList(id = null) {
         <button class="button-add-task">Adicionar</button>
         <ul class="list-tasks"></ul>
     `;
-    
+
     listContainers.appendChild(newListContainer);
-    
+
     initializeList(newListContainer, listId);
     saveListTitle(listId);
     return listId;
@@ -29,7 +29,7 @@ function createNewList(id = null) {
 // Função para salvar o título da lista no LocalStorage
 function saveListTitle(listId) {
     const titleInput = document.getElementById(`list-title-${listId}`);
-    
+
     // Recuperar título salvo no LocalStorage, se existir
     const savedTitle = localStorage.getItem(`Title-${listId}`);
     if (savedTitle) {
