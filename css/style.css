@@ -105,6 +105,8 @@ img {
     text-decoration: line-through;
 }
 
+/* Botoes */
+
 .edit-btn {
     position: absolute;
     right: 50px;
@@ -188,9 +190,9 @@ img {
     cursor: pointer;
 }
 
+/* Estilo para dispositivos móveis */
 @media (max-width: 600px) {
 
-    /* Estilo para dispositivos móveis */
     body {
         background: linear-gradient(#83c9c9, #58a5aa, #58a5aa, #83c9c9);
     }
@@ -256,6 +258,8 @@ img {
     }
 }
 
+/* Titulos */
+
 .titles {
     display: flex;
     justify-content: center;
@@ -271,4 +275,157 @@ img {
     text-align: center;
     border: none;
     padding: 5px;
+}
+
+.list-data {
+    display: flex;
+}
+
+.list-data input {
+    height: 3em;
+    width: 5em;
+}
+
+/* Controles */
+
+
+.add-container:hover .add-list-span {
+    display: block;
+}
+
+.btnRemoveNewList {
+    margin: 2%;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border: 2px solid white;
+}
+
+.btnRemoveNewList:hover {
+    opacity: 0.8;
+}
+
+.btnRemoveNewList:active {
+    opacity: 0.5;
+}
+
+/* Estilo de alerta */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+    background-color: rgba(90, 173, 136, 0.8);
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+    border: 2px solid;
+
+}
+
+#dontShowAgain {
+    margin-right: 10px;
+}
+
+button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #003329;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+/* Marquee */
+.marquee {
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    /* Centraliza o texto quando parado */
+}
+
+.marquee p {
+    position: absolute;
+    width: max-content;
+    margin: 0;
+    line-height: 50px;
+    text-align: center;
+    transform: translateX(0);
+}
+
+.marquee.scrolling p {
+    animation: marquee 10s linear infinite;
+}
+
+.marquee.editing {
+    white-space: normal;
+    /* Permite a quebra de linha no modo de edição */
+    text-align: center;
+    /* Centraliza o texto no modo de edição */
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(70%);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+/* Botão Adicionar */
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-container {
+    position: relative;
+}
+
+.btnAddNewList {
+    margin: 2%;
+    margin-top: 25px;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    border: 2px inset white;
+}
+
+.btnAddNewList:hover {
+    opacity: 0.8;
+}
+
+.btnAddNewList:active {
+    opacity: 0.5;
+}
+
+.add-list-span {
+    display: none;
+    position: absolute;
+    top: 5px;
+    left: 50px;
+    width: 120px;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: rgba(0, 0, 0, 0.8);
+    padding: 5px;
+    border-radius: 8px 8px 8px 0;
 }
