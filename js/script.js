@@ -1,13 +1,12 @@
 // Adicionar e Remover Lista
-let listCounter = 0;
-const listContainers = document.getElementById('listContainers');
-let listToDelete = null;
-
 function createNewList(id = null) {
     const listId = id || ++listCounter;
     const newListContainer = document.createElement('div');
     newListContainer.className = 'container';
     newListContainer.id = `list-${listId}`;
+
+    // Obtendo a data e hora atual no formato ISO para o input
+    const now = new Date().toISOString().slice(0, 16);
 
     newListContainer.innerHTML = `
         <button class="delete-list-btn" id="btnRemove" onclick="confirmDeleteList(${listId})">Excluir</button>
@@ -17,6 +16,9 @@ function createNewList(id = null) {
         <input class="input-task" placeholder="O que tenho que fazer...">
         <button class="button-add-task">Adicionar</button>
         <ul class="list-tasks"></ul>
+        <!-- Campo de data e hora de criação -->
+        <label>Data de Criação:</label>
+        <input class="creation-date" type="datetime-local" value="${now}" readonly>
     `;
 
     listContainers.appendChild(newListContainer);
